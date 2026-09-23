@@ -312,4 +312,215 @@ forge script script/Deploy.s.sol \
   --private-key $PRIVATE_KEY \
   --rpc-url $DOTONE_RPC_URL
 
-  
+  Step 4: Update Frontend Config
+Edit frontend/src/config/dotone.ts:
+export const CONTRACTS = {
+  stakingAutoCompounder: '0x...', // ← Deployed address
+  dotOneStaking: '0x...',         // ← DotOne native staking
+} as const;
+
+Step 5: Deploy Frontend
+cd frontend
+npm run build
+npm run start
+
+Or deploy to Vercel:
+vercel --prod
+
+🗺️ Roadmap
+v0.1.0 — Core (Current)
+☑ StakingAutoCompounder.sol with stake/compound/unstake
+☑ Position tracking per user
+☑ Auto-compound interval (1–30 days)
+☑ Token support whitelist
+☑ 24 passing tests, 96% coverage
+☑ Next.js frontend with wagmi
+☑ DotOne Chain config (Chain ID 505)
+v0.2.0 — Automation
+□ Chainlink Automation integration for trustless compounding
+□ Gelato Network support as alternative keeper
+□ Gasless compounding via ERC-2771 meta-transactions
+□ Batch compound for multiple positions
+v0.3.0 — Analytics
+□ Historical APY tracking per position
+□ Realized vs. unrealized yield breakdown
+□ Tier migration suggestions
+□ Export to CSV/JSON
+v0.4.0 — Social
+□ Leaderboard of top compounders
+□ Referral system with fee sharing
+□ Achievement NFTs for milestones
+□ Telegram/Discord bot notifications
+v1.0.0 — Production
+□ External security audit
+□ Multi-sig treasury for fees
+□ Mainnet launch on DotOne
+□ Integration with DotOne's official dashboard
+
+🔐 Security
+Audit Status
+⚠️ This code is unaudited. Do not deploy to DotOne mainnet with real
+funds without a professional security review.
+
+Mitigations in Place
+Risk	Mitigation
+Reentrancy	ReentrancyGuard on stake(), compound(), unstake()
+Unauthorized access	onlyPositionOwner modifier on compound/unstake
+Zero-amount attacks	ZeroAmount revert on all entry points
+Unsupported tokens	Whitelist check via supportedTokens mapping
+Compound spam	compoundInterval enforcement (min 1 day)
+Interval abuse	MIN_COMPOUND_INTERVAL and MAX_COMPOUND_INTERVAL bounds
+Position hijacking	Positions keyed by (user, positionId), not globally
+Approve race condition	forceApprove instead of approve
+
+Known Limitations
+Keeper dependency — auto-compound requires off-chain trigger. Chainlink
+Automation integration is planned for v0.2.0.
+
+No emergency pause — a Pausable mechanism should be added before mainnet.
+
+Owner centralization — setTokenSupport and setCompoundInterval are
+onlyOwner. A timelock or multi-sig is recommended.
+
+Tier metadata is display-only — the compounder does not verify tier APYs
+on-chain; it trusts DotOne's native contract.
+
+Reporting a Vulnerability
+Please report security issues to security@yourdomain.com rather than
+opening a public issue. We aim to respond within 48 hours
+
+🛠️ Tech Stack
+<div align="center">
+Layer	Technology
+Smart Contracts	Solidity 0.8.24
+Framework	Foundry (forge, cast, anvil)
+Libraries	OpenZeppelin Contracts
+Chain	DotOne Smart Chain (Chain ID: 505)
+Consensus	PoSA (Proof of Staked Authority)
+SDK	@dotone/sdk
+Frontend	Next.js 14, React 18
+Web3	wagmi, viem
+Styling	Tailwind CSS
+Testing	Forge-std
+CI/CD	GitHub Actions
+</div>
+
+📂 Project Structure
+dotone-staking-compounder/
+│
+├── contracts/
+│   ├── StakingAutoCompounder.sol       # 🔷 Core compounder
+│   └── interfaces/
+│       └── IDotOneStaking.sol          # 🔌 DotOne staking interface
+│
+├── test/
+│   └── StakingAutoCompounder.t.sol     # 🧪 24 tests
+│
+├── script/
+│   └── Deploy.s.sol                    # 🚀 Deployment script
+│
+├── frontend/
+│   ├── src/
+│   │   ├── config/
+│   │   │   └── dotone.ts               # ⚙️ Chain + tier config
+│   │   ├── hooks/
+│   │   │   └── useDotOneSDK.ts         # 🪝 SDK integration
+│   │   └── pages/
+│   │       └── index.tsx               # 🖥️ Main dashboard
+│   ├── package.json
+│   └── tsconfig.json
+│
+├── foundry.toml                        # Foundry config
+├── remappings.txt                      # Import remappings
+├── .env.example                        # Environment template
+├── .gitignore
+├── LICENSE                             # MIT
+└── README.md                           # ← You are here
+
+🎬 Demo
+What I'll Show at the DotOne Event
+Live staking on DotOne Chain — deposit tokens, watch position appear
+
+Auto-compound execution — trigger compound, see principal increase
+
+Tier auto-selection — demonstrate how DotOne picks the tier
+
+Position tracking — full dashboard with active positions
+
+Gas benchmarks — show Foundry gas reports
+
+Demo Screenshots
+Screenshots will be added after testnet deployment.
+
+🤝 Contributing
+Contributions are welcome! Please follow these steps:
+
+Fork the repository
+
+Create a feature branch (git checkout -b feature/amazing-feature)
+
+Commit your changes (git commit -m 'feat: add amazing feature')
+
+Push to the branch (git push origin feature/amazing-feature)
+
+Open a Pull Request
+
+Commit Convention
+feat: new feature
+
+fix: bug fix
+
+docs: documentation
+
+test: test additions
+
+refactor: code refactoring
+
+chore: maintenance
+
+Code Style
+Solidity 0.8.24, forge fmt before commit
+
+TypeScript strict mode, ESLint + Prettier
+
+NatSpec comments for all public functions
+
+100% test coverage for new code
+
+📚 References
+DotOne Chain
+DotOne Website
+
+DotScan Explorer
+DotOne Documentation
+@dotone/sdk on npm
+Development Tools
+Foundry Book
+OpenZeppelin Contracts
+wagmi Documentation
+viem Documentation
+Next.js Documentation
+
+📝 License
+This project is licensed under the MIT License — see the LICENSE
+file for details.
+
+👤 Author
+<div align="center">
+Parsa Abolhasani Rad
+Senior Blockchain Engineer
+
+https://www.linkedin.com/in/parsa-abolhasani-rad-/
+https://github.com/ParsaAbolhasani
+
+</div>
+
+
+<div align="center">
+⭐ If this project helps you, please give it a star!
+Built with ❤️ for the DotOne Chain ecosystem
+
+
+⬆ Back to Top
+
+</div> ```
